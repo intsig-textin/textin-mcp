@@ -1,21 +1,29 @@
 {
-  "name": "textin-mcp",
-  "version": "0.1.0",
-  "description": "Textin MCP",
-  "private": true,
+  "name": "@intsig/server-textin",
+  "version": "0.1.1",
+  "description": "MCP Server for the Textin Robot API.",
+  "license": "MIT",
+  "author": "Textin(https://www.textin.com)",
+  "homepage": "https://www.textin.com/",
+  "bugs": "https://github.com/intsig-textin/textin-mcp/issues",
   "type": "module",
   "bin": {
-    "textin-mcp": "./build/index.js"
+    "textin-mcp": "dist/index.js"
   },
   "files": [
-    "build"
+    "dist"
   ],
   "scripts": {
-    "build": "tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\"",
+    "build": "tsc && node -e \"require('fs').chmodSync('dist/index.js', '755')\"",
     "prepare": "npm run build",
-    "watch": "tsc --watch",
-    "inspector": "npx @modelcontextprotocol/inspector build/index.js"
+    "watch": "tsc --watch"
   },
+  "keywords": [
+    "textin",
+    "mcp",
+    "ocr",
+    "markdown"
+  ],
   "dependencies": {
     "@modelcontextprotocol/sdk": "0.6.0",
     "axios": "^1.8.4",
