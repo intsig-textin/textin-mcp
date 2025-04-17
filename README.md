@@ -1,6 +1,6 @@
-# Textin OCR MCP
+# Textin MCP Server
 
-MCP Server for the Textin OCR.
+TextIn MCP Server is a tool for extracting text and performing OCR on documents, including document text recognition, ID recognition, and invoice recognition. It also supports converting documents into Markdown format.
 
 ## Tools
 - `recognition_text`
@@ -22,8 +22,11 @@ MCP Server for the Textin OCR.
 
 ## Setup
 
-### APP_KEY and APP_SECRET
-Get a Textin APP_KEY and APP_SECRET by following the instructions [here](https://www.textin.com/doc/guide/account/%E5%A6%82%E4%BD%95%E8%8E%B7%E5%8F%96app%20id?status=first).
+### APP_ID and APP_SECRET
+
+Click [here](https://www.textin.com/user/login?from=github_mcp) to register for a TextIn account.
+
+Get Textin APP_ID and APP_SECRET by following the instructions [here](https://www.textin.com/doc/guide/account/%E5%A6%82%E4%BD%95%E8%8E%B7%E5%8F%96app%20id?status=first).
 
 ### NPX
 
@@ -34,7 +37,7 @@ Get a Textin APP_KEY and APP_SECRET by following the instructions [here](https:/
       "command": "npx",
       "args": [
         "-y",
-        "@modelcontextprotocol/textin-ocr-mcp"
+        "@intsig/server-textin"
       ],
       "env": {
         "APP_ID": "<YOUR_APP_ID>",
@@ -43,6 +46,7 @@ Get a Textin APP_KEY and APP_SECRET by following the instructions [here](https:/
       },
       "timeout": 600
     }
+  }
 }
 ```
 
