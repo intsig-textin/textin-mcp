@@ -2,6 +2,10 @@
 
 TextIn MCP Server is a tool for extracting text and performing OCR on documents, including document text recognition, ID recognition, and invoice recognition. It also supports converting documents into Markdown format.
 
+<a href="https://glama.ai/mcp/servers/@intsig-textin/textin-mcp">
+  <img width="380" height="200" src="https://glama.ai/mcp/servers/@intsig-textin/textin-mcp/badge" alt="Textin Server MCP server" />
+</a>
+
 ## Tools
 - `recognition_text`
   - Text recognition from images, Word documents, and PDF files.
@@ -17,8 +21,6 @@ TextIn MCP Server is a tool for extracting text and performing OCR on documents,
   - Automatically and intelligently extract key information from documents.
   - Input: `file path` (string)
   - Return: The key information JSON.
-
-
 
 ## Setup
 
