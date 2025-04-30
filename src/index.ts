@@ -34,6 +34,7 @@ const OCR_SERVICE_HEADERS = {
 	"x-ti-app-id": process.env.APP_ID,
 	"x-ti-secret-code": process.env.APP_SECRET,
 };
+const URL_PATTERN = /^(https?:\/\/)/;
 
 function expandHome(filepath: string): string {
 	if (filepath.startsWith('~/') || filepath === '~') {
@@ -49,6 +50,11 @@ function normalizePath(p: string): string {
 
 // Security utilities
 async function validatePath(requestedPath: string): Promise<string> {
+	// Check if the path is a URL (http:// or https://)
+	if (URL_PATTERN.test(requestedPath)) {
+		return requestedPath;
+	}
+
 	const expandedPath = expandHome(requestedPath);
 	const absolute = path.isAbsolute(expandedPath)
 		? path.resolve(expandedPath)
@@ -85,7 +91,9 @@ const OCR_TOOL: Tool = {
 			path: {
 				type: "string",
 				format: "file-path",
-				description: "Read the complete contents of a file from the file system. "
+				description: `Read the complete contents of a file from the file system or a URL (HTTP/HTTPS) pointing to a document.
+				 The resource MUST be one of the supported types: PDF, Image (Jpeg, Jpg, Png, Bmp).
+				`
 			}
 		},
 		required: ["path"]
@@ -101,7 +109,9 @@ const EXTRACT_KEYINFO_TOOL: Tool = {
 			path: {
 				type: "string",
 				format: "file-path",
-				description: "Read the complete contents of a file from the file system. "
+				description: `Read the complete contents of a file from the file system or a URL (HTTP/HTTPS) pointing to a document.
+				 The resource MUST be one of the supported types: PDF, Image (Jpeg, Jpg, Png, Bmp), Microsoft Office Documents (Word, Excel).
+				`
 			}
 		},
 		required: ["path"]
@@ -117,7 +127,9 @@ const DOC_TO_MARKDOWN_TOOL: Tool = {
 			path: {
 				type: "string",
 				format: "file-path",
-				description: "Read the complete contents of a file from the file system. "
+				description: `Read the complete contents of a file from the file system or a URL (HTTP/HTTPS) pointing to a document.
+				 The resource MUST be one of the supported types: PDF, Image (Jpeg, Jpg, Png, Bmp), Microsoft Office Documents (Word, Excel).
+				`
 			}
 		},
 		required: ["path"]
@@ -127,7 +139,7 @@ const DOC_TO_MARKDOWN_TOOL: Tool = {
 const READ_FILE_TOOL = {
 	name: "read_file",
 	description:
-		"Read the complete contents of a file from the file system. ",
+		"Read the complete contents of a file from the file system.",
 	inputSchema: {
 		type: "object",
 		properties: {
@@ -153,8 +165,22 @@ interface URLParams {
 
 // call textin api
 async function callApi(filePath: string, API: string, params?: URLParams): Promise<any> {
-	let fileStream: NodeJS.ReadableStream;
-	fileStream = createReadStream(filePath);
+	let fileStream: NodeJS.ReadableStream | Buffer;
+
+	// Check if filePath is a URL (http:// or https://)
+	if (URL_PATTERN.test(filePath)) {
+		try {
+			// Download the file from the web URL
+			const response = await axios.get(filePath, { responseType: 'arraybuffer' });
+			fileStream = response.data;
+		} catch (error) {
+			console.error("Error downloading file from URL:", error);
+			throw error;
+		}
+	} else {
+		// Use the local file path
+		fileStream = createReadStream(filePath);
+	}
 
 	if (params) {
 		const urlParams = new URLSearchParams(params as Record<string, string>).toString();
@@ -167,6 +193,12 @@ async function callApi(filePath: string, API: string, params?: URLParams): Promi
 				...OCR_SERVICE_HEADERS
 			}
 		});
+
+		// Check if the returned JSON contains 'code' and if it's 200
+		if (response.data.code !== 200) {
+			console.error("Error from TextIn MCP service:", response.data.message ?? 'Unknown error');
+			throw new Error(`API returned error code: ${response.data.code} message: ${response.data.message}`);
+		}
 
 		return response.data;
 	} catch (error) {

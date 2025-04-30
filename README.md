@@ -2,25 +2,38 @@
 
 TextIn MCP Server is a tool for extracting text and performing OCR on documents, including document text recognition, ID recognition, and invoice recognition. It also supports converting documents into Markdown format.
 
-<a href="https://glama.ai/mcp/servers/@intsig-textin/textin-mcp">
+<!-- <a href="https://glama.ai/mcp/servers/@intsig-textin/textin-mcp">
   <img width="380" height="200" src="https://glama.ai/mcp/servers/@intsig-textin/textin-mcp/badge" alt="Textin Server MCP server" />
-</a>
+</a> -->
 
 ## Tools
 - `recognition_text`
   - Text recognition from images, Word documents, and PDF files.
-  - Input: `file path` (string)
+  - Input: `file path` or `a URL (HTTP/HTTPS) pointing to a document` (string)
   - Return: Text of the document.
+  - Supports conversion for:
+    - PDF
+    - Image (Jpeg, Jpg, Png, Bmp)
 
 - `doc_to_markdown`
   - Convert images, PDFs, and Word documents to Markdown.
-  - Input: `file path` (string)
+  - Input: `file path` or `a URL (HTTP/HTTPS) pointing to a document` (string)
   - Return: Markdown of the document.
+  - Supports conversion for:
+    - PDF
+    - Microsoft Office Documents (Word, Excel)
+    - Image (Jpeg, Jpg, Png, Bmp)
 
 - `general_information_extration`
   - Automatically and intelligently extract key information from documents.
-  - Input: `file path` (string)
+  - Input: `file path` or `a URL (HTTP/HTTPS) pointing to a document` (string)
   - Return: The key information JSON.
+  - Supports conversion for:
+    - PDF
+    - Microsoft Office Documents (Word, Excel)
+    - Image (Jpeg, Jpg, Png, Bmp)
+
+When the input is a URL, it does not support handling access to protected resources.
 
 ## Setup
 
