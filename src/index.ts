@@ -78,8 +78,28 @@ async function validatePath(requestedPath: string): Promise<string> {
 
 const ReadFileArgsSchema = z.object({
 	path: z.string(),
+	key: z.array(z.string()).default([]),
+	table_header: z.array(z.string()).default([]),
 });
 
+function removeBoundingRegions(obj: any): any {
+	if (Array.isArray(obj)) {
+		return obj.map(removeBoundingRegions);
+	} else if (obj !== null && typeof obj === 'object') {
+		const newObj: any = {};
+		for (const key in obj) {
+			if (key === 'bounding_regions') {
+				// 跳过这个字段
+				continue;
+			}
+			newObj[key] = removeBoundingRegions(obj[key]);
+		}
+		return newObj;
+	} else {
+		// 基本类型直接返回
+		return obj;
+	}
+}
 
 
 const OCR_TOOL: Tool = {
@@ -102,7 +122,7 @@ const OCR_TOOL: Tool = {
 
 const EXTRACT_KEYINFO_TOOL: Tool = {
 	name: "general_information_extration",
-	description: "Automatically and intelligently extract key information from documents.",
+	description: "Automatically identify and extract information from documents, or identify and extract user-specified information.",
 	inputSchema: {
 		type: "object",
 		properties: {
@@ -112,6 +132,18 @@ const EXTRACT_KEYINFO_TOOL: Tool = {
 				description: `Read the complete contents of a file from the file system or a URL (HTTP/HTTPS) pointing to a document.
 				 The resource MUST be one of the supported types: PDF, Image (Jpeg, Jpg, Png, Bmp), Microsoft Office Documents (Word, Excel).
 				`
+			},
+			key: {
+				type: "array",
+				items: { type: "string" },
+				format: "key",
+				description: "The non-tabular text information that the user wants to identify, input format is an array of strings."
+			},
+			table_header: {
+				type: "array",
+				items: { type: "string" },
+				format: "table_header",
+				description: "The table information that the user wants to identify, input format is an array of strings."
 			}
 		},
 		required: ["path"]
@@ -223,22 +255,28 @@ async function handleOcrTool(validPath: string): Promise<{ content: { type: stri
 	return { content: [{ type: 'text', text: extractedText }] };
 }
 
-async function handleExtractKeyInfoTool(validPath: string): Promise<{ content: { type: string; text: string }[] }> {
+async function handleExtractKeyInfoTool(validPath: string, key: string, table_header: string): Promise<{ content: { type: string; text: string }[] }> {
+	const ie_type = (key !== '' || table_header !== '') ? "close_ie" : "auto_structure";
+
 	const urlParams = {
-		ie_type: "auto_structure",
-		client_type: "mcp"
+		ie_type: ie_type,
+		client_type: "mcp",
+		key: key,
+		table_header: table_header
 	};
+
 	const result = await callApi(validPath, EXTRACT_KEYINFO_API, urlParams);
 
 	//去除一些无意义的json信息
 	const transformedResult = result.result.detail_structure.map((item: any) => {
 		return {
 			fields: Object.fromEntries(
-				Object.entries(item.fields).map(([key, value]) => [
-					key,
+				Object.entries(item.fields).map(([_key, value]) => [
+					_key,
 					(value as any).map((fieldItem: any) => fieldItem.value)
 				])
 			),
+			tables_relationship: removeBoundingRegions(item.tables_relationship),
 			stamps: item.stamps.map((stamp: any) => {
 				const { position, ...rest } = stamp;
 				return rest;
@@ -295,7 +333,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 			case OCR_TOOL.name:
 				return await handleOcrTool(validPath);
 			case EXTRACT_KEYINFO_TOOL.name:
-				return await handleExtractKeyInfoTool(validPath);
+				return await handleExtractKeyInfoTool(validPath, (parsed.data.key || []).join(','), (parsed.data.table_header || []).join(','));
 			case DOC_TO_MARKDOWN_TOOL.name:
 				return await handleDocToMarkdownTool(validPath);
 			default:
