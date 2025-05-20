@@ -9,7 +9,8 @@ TextIn MCP Server is a tool for extracting text and performing OCR on documents,
 ## Tools
 - `recognition_text`
   - Text recognition from images, Word documents, and PDF files.
-  - Input: `file path` or `a URL (HTTP/HTTPS) pointing to a document` (string)
+  - Inputs:
+    - `path` (string, required): `file path` or `a URL (HTTP/HTTPS) pointing to a document`
   - Return: Text of the document.
   - Supports conversion for:
     - PDF
@@ -17,7 +18,8 @@ TextIn MCP Server is a tool for extracting text and performing OCR on documents,
 
 - `doc_to_markdown`
   - Convert images, PDFs, and Word documents to Markdown.
-  - Input: `file path` or `a URL (HTTP/HTTPS) pointing to a document` (string)
+  - Inputs:
+    - `path` (string, required): `file path` or `a URL (HTTP/HTTPS) pointing to a document`
   - Return: Markdown of the document.
   - Supports conversion for:
     - PDF
@@ -25,8 +27,11 @@ TextIn MCP Server is a tool for extracting text and performing OCR on documents,
     - Image (Jpeg, Jpg, Png, Bmp)
 
 - `general_information_extration`
-  - Automatically and intelligently extract key information from documents.
-  - Input: `file path` or `a URL (HTTP/HTTPS) pointing to a document` (string)
+  - Automatically identify and extract information from documents, or identify and extract user-specified information.
+  - Inputs:
+    - `path` (string, required): `file path` or `a URL (HTTP/HTTPS) pointing to a document`
+    - `key` (string[], optional): The non-tabular text information that the user wants to identify, input format is an array of strings.
+    - `table_header` (string[], optional): The table information that the user wants to identify, input format is an array of strings.
   - Return: The key information JSON.
   - Supports conversion for:
     - PDF

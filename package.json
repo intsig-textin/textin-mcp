@@ -1,6 +1,6 @@
 {
   "name": "@intsig/server-textin",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "MCP Server for the Textin Robot API. TextIn官方MCP，支持文档OCR识别，文档转Markdown，文档关键信息提取。",
   "license": "MIT",
   "author": "Textin(https://www.textin.com)",
