@@ -1,4 +1,11 @@
-# Textin MCP Server
+# TextIn OCR MCP
+<p align="center">
+<img align="center" src="https://ccidownload.blob.core.chinacloudapi.cn/download/2025/LLMS/logo.png" width="800" alt="TextIn">
+</p>
+
+English | [中文](./README_CHS.md)
+
+## TextIn OCR MCP Server
 
 TextIn MCP Server is a tool for extracting text and performing OCR on documents, including document text recognition, ID recognition, and invoice recognition. It also supports converting documents into Markdown format.
 
@@ -6,7 +13,7 @@ TextIn MCP Server is a tool for extracting text and performing OCR on documents,
   <img width="380" height="200" src="https://glama.ai/mcp/servers/@intsig-textin/textin-mcp/badge" alt="Textin Server MCP server" />
 </a> -->
 
-## Tools
+### Tools
 - `recognition_text`
   - Text recognition from images, Word documents, and PDF files.
   - Inputs:
